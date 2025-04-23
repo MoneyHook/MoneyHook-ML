@@ -1,0 +1,30 @@
+{
+  "name": "FastAPI Container",
+  "dockerComposeFile": "../compose.yaml",
+  "initializeCommand": "ls -al",
+  "service": "fastapi",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [
+    8000
+  ],
+  "postCreateCommand": "poetry install",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "garytyler.darcula-pycharm",
+        "mhutchie.git-graph",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "magicstack.MagicPython",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "mechatroner.rainbow-csv",
+        "mosapride.zenkaku",
+        "shawtung.vscode-commentlinedown",
+        "ms-python.black-formatter"
+      ]
+    }
+  }
+}
