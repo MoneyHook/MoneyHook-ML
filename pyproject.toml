@@ -15,6 +15,7 @@ pydantic = "^2.11.3"
 
 [tool.poetry.scripts]
 start = "app.main:start"
+train-category-model = "ml.category.category_model:main"
 
 [build-system]
 requires = ["poetry-core"]

@@ -62,6 +62,16 @@
 
    - http://localhost:8000/redoc
 
+1. モデルの作成
+
+   - 以下のコマンドで`category_model.pkl`を作成することができます
+
+   ```
+   poetry run train-category-model
+   ```
+
+   `/workspace/app/models`内に.pkl ファイルが作成されていたら成功です。
+
 ### 🛠️ 技術スタックと設定詳細
 
 **Docker 環境**
