@@ -5,6 +5,7 @@ import joblib
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
@@ -13,8 +14,11 @@ from sklearn.pipeline import Pipeline
 CSV_PATH = "/workspace/ml/category/"
 TRAIN_CSV = "category_training_data.csv"
 CATEGORY_MASTER_CSV = "category_master.csv"
-# ML_MODELS = "random_forest"
-ML_MODELS = "multinomial"
+CLASSIFICATION_MASTER_CSV = "category_classification_master.csv"
+
+ML_MODELS = "random_forest"
+# ML_MODELS = "multinomial"
+# ML_MODELS = "logistic_regression"
 
 LOGS_DIR = "/workspace/ml/category/logs"
 
@@ -24,15 +28,45 @@ MODEL_DIR = "/workspace/app/models"
 def load_data() -> pd.DataFrame:
     """データを読み込む関数"""
     df = pd.read_csv(f"{CSV_PATH}{TRAIN_CSV}")
-    category_master = pd.read_csv(f"{CSV_PATH}{CATEGORY_MASTER_CSV}")
-    category_map = dict(zip(category_master["category"], category_master["id"]))
-    df["category"] = df["category"].map(category_map)
-    return df
+
+    category_class_master = pd.read_csv(f"{CSV_PATH}{CLASSIFICATION_MASTER_CSV}")
+    category_map = dict(
+        zip(
+            category_class_master["classification"],
+            category_class_master["id"],
+        )
+    )
+    df["classification"] = df["classification"].map(category_map)
+
+    # 件数を絞り込み
+    df_limited = (
+        df.groupby("classification")
+        .apply(lambda g: g.sample(n=min(len(g), 300), random_state=42))
+        .reset_index(drop=True)
+    )
+
+    return df_limited
 
 
 def multinomial_model() -> Pipeline:
     """Multinomial Naive Bayesモデルを定義する関数"""
     pipeline = Pipeline([("vect", CountVectorizer()), ("clf", MultinomialNB())])
+    return pipeline
+
+
+def logistic_regression_model() -> Pipeline:
+    """ロジスティック回帰モデルを定義する関数"""
+    pipeline = Pipeline(
+        [
+            ("tfidf", TfidfVectorizer()),
+            (
+                "clf",
+                LogisticRegression(
+                    max_iter=1000, random_state=42, class_weight="balanced"
+                ),
+            ),
+        ]
+    )
     return pipeline
 
 
@@ -66,10 +100,10 @@ def main():
     # データ分割
     X_train, X_test, y_train, y_test = train_test_split(
         df["title"],
-        df["category"],
+        df["classification"],
         test_size=0.1,
         random_state=42,
-        stratify=df["category"],
+        stratify=df["classification"],
     )
 
     # パイプライン定義
@@ -78,6 +112,8 @@ def main():
             pipeline = multinomial_model()
         case "random_forest":
             pipeline = random_forest_model()
+        case "logistic_regression":
+            pipeline = logistic_regression_model()
         case _:
             pipeline = multinomial_model()
 
