@@ -23,7 +23,9 @@
         "mechatroner.rainbow-csv",
         "mosapride.zenkaku",
         "shawtung.vscode-commentlinedown",
-        "ms-python.black-formatter"
+        "ms-python.black-formatter",
+        "esbenp.prettier-vscode",
+        "ms-python.isort"
       ]
     }
   }

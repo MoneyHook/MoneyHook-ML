@@ -1,0 +1,12 @@
+{
+    "workbench.iconTheme": "vscode-icons",
+    "workbench.colorTheme": "Darcula Pycharm with Dark GUI",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    "python.analysis.extraPaths": [
+      "./app/api"
+    ]
+}
+  

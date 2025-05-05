@@ -1,17 +1,22 @@
-from fastapi import FastAPI
-from dotenv import load_dotenv
 import os
 
 import uvicorn
+from dotenv import load_dotenv
+from fastapi import FastAPI
+
+from app.api.predict import router as predict
 
 load_dotenv()
 
-app = FastAPI(title=os.getenv("API_TITLE", "FastAPI"))
+app = FastAPI(
+    title=os.getenv("API_TITLE", "FastAPI"), docs_url="/docs", redoc_url="/redoc"
+)
+
+app.include_router(predict, prefix="/api", tags=["Prediction"])
 
 
 @app.get("/")
-def read_root():
-    print("hej")
+def root():
     return {"env": os.getenv("APP_ENV", "default")}
 
 
